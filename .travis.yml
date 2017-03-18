@@ -1,0 +1,23 @@
+sudo: required
+services: docker
+language: python
+python: 3.5
+
+script:
+  - git clone https://github.com/terencewestphal/get-archlinux-bootstrap.git
+  - bash get-archlinux-bootstrap/get-archlinux-bootstrap.sh
+  - 'python3.5 tar_fix.py --input *.tar.gz --output bootstrap.tar.gz'
+  - docker build --build-arg architecture=x86_64 -t thecompiler/archlinux-bare .
+  - '[[ $TRAVIS_PULL_REQUEST == false ]] && docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" || true'
+  - '[[ $TRAVIS_PULL_REQUEST == false ]] && docker push thecompiler/archlinux-bare'
+
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#qutebrowser-dev"
+    on_success: always
+    on_failure: always
+    skip_join: true
+    template:
+      - "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}"
+      - "%{compare_url} - %{build_url}"
