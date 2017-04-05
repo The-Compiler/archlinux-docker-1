@@ -20,11 +20,8 @@ RUN pacman-key --init \
     && sed -n 's/^#Server = https/Server = https/p' /etc/pacman.d/mirrorlist > /tmp/mirrorlist \
     && rankmirrors -n 3 /tmp/mirrorlist | tee /etc/pacman.d/mirrorlist \
     && rm /tmp/mirrorlist \
-    # https://www.archlinux.org/news/ca-certificates-utils-20170307-1-upgrade-requires-manual-intervention/
     # `locale-gen' needs `gzip' (via `localedef', which works on /usr/share/i18n/charmaps/*.gz), `paccache' needs `awk'.
-    && pacman -Suyw --noconfirm --noprogressbar --quiet gzip awk \
-    && rm /etc/ssl/certs/ca-certificates.crt \
-    && pacman -Su --noconfirm --noprogressbar --quiet gzip awk \
+    && pacman -Syu --noconfirm --noprogressbar --quiet gzip awk \
     && paccache -r -k0 \
     && echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen \
     && locale-gen \
